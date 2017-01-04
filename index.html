@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset='utf8'>
+	<title>MVVM</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+	<script src="/static/index.js"></script>
+</head>
+<body>
+	<div id="pageContainer">
+		<!-- test -->
+		构造函数中的数据是:{{num}}和{{count}}
+		<div class="test">
+			{{num}}
+			<p>{{count}}内容就是<span>{{count}}*{{num}}={{count*num}}</span></p>
+		</div>
+		<p>这是一个测试</p>
+		<span @click="click">我们需要测<a>{{attr}}</a>试很多情况，但是在当前例子中，只测试有限情况</span>
+		<div>
+			{{num*50*count}}
+			<input value={{num}} placeholder="{{attr}}" @input="test"/>
+		</div>
+	</div>
+	<script>
+		new MVVM({
+			el : "#pageContainer",
+			data : {
+				num : 1,
+				count : 2,
+				attr : 'holder'
+			},
+			method : {
+				test : function (e) {
+					this.num = e.target.value;
+				},
+				click : function (e){
+					this.count *= 2
+				}
+			}
+		})
+	</script>
+</body>
+</html>
