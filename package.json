@@ -1,7 +1,7 @@
 {
   "name": "miniMvvm",
   "version": "1.0.0",
-  "description": "最简单的方式实现一个最简单的mvvm",
+  "description": "simple way to make mvvm, [live demo](https://renminghao.github.io/miniMvvm/index.html)",
   "main": "./build/index.js",
   "scripts": {
     "start": "node webpack/server.js"

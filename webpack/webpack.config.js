@@ -6,7 +6,7 @@ module.exports = {
 	output : {
 		filename : '[name].js',
 		path : path.join(__dirname , '../', 'build'),
-    	publicPath : '/static/',
+    publicPath : '/static/',
 		library: '[name]',
 		libraryTarget: 'umd',
 		umdNamedDefine: true
