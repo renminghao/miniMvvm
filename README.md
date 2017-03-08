@@ -6,11 +6,11 @@ vue目前这么火，不试试水怎么好意思说自己跟的上潮流呢，vu
 
 PS. 代码里面用到了`with`来改动作用域，如果用ES6写通过babel-loader转换的时候会给每个文件里面加上`use strict`在严格模式下不能使用`with`等语法，因此这里面的代码都是通过ES5来写的#尴尬脸#
 
-PSS.代码仓库在[这里](http://gitlab.alibaba-inc.com/minghao.rmh/mvvm)
+PSS.代码仓库在[这里](https://github.com/renminghao/miniMvvm)
 
 接下来就从头开始看看这部分代码吧
 
--	[index.js](http://gitlab.alibaba-inc.com/minghao.rmh/mvvm/blob/master/src/index.js)
+-	[index.js](https://github.com/renminghao/miniMvvm/blob/master/src/index.js)
 
 首先是`index.js`,在浏览器环境里，全局需要使用MVVM变量，因此绑定在window下，得到入参时候，先把所有的data和method数据绑定在this下面，这样子方便我们后续在改变作用域的情况下直接来通过eval执行对应的表达式内容，`bindDataByRender`里面的get里面，通过col.add来收集所有的渲染操作(晕了吧，没事，这里你只要知道有这么个玩意儿就行了),
 <pre>```
@@ -21,7 +21,7 @@ get : function () {
 ```</pre>
 当然，这里只是设置了每个数据的get和set，并没有真正的去执行，在哪里执行呢,`index.js`里面有一个render，可以深入到render里面来看
 
--	[render.js](http://gitlab.alibaba-inc.com/minghao.rmh/mvvm/blob/master/src/render.js)
+-	[render.js](https://github.com/renminghao/miniMvvm/blob/master/src/render.js)
 
 PS.这里只实现了最基本的指令，因此代码量比较少
 
@@ -111,7 +111,7 @@ bindWatcher : function (el,text,type,scop) {
 
 watch很简单的，主要就是实现了一次上面`	new watch(el,text,fn,scop)`里面fn的调用，我们查看最新一次的内容和上一次的内容是否一致，如果不一致我们就来执行一遍fn，那fn具体是啥呢，可以追回到[render.js](http://gitlab.alibaba-inc.com/minghao.rmh/mvvm/blob/master/src/render.js#L126)来看,就是当数据不一样的时候我们执行一次渲染，这不就实现了mvvm么？
 
-当然，上面都描述的是编译器，那真正的执行期是啥样子呢，我们可以看到index.js里面，执行期里面只执行了render来进行编译，在编译的时候肯定会使用到我们的变量，这个时候就会触发我们index.js里面的Object.defineProperty里面的get方法，触发一次col.add，我们看下[col](http://gitlab.alibaba-inc.com/minghao.rmh/mvvm/blob/master/src/collect.js)里面又是什么鬼
+当然，上面都描述的是编译器，那真正的执行期是啥样子呢，我们可以看到index.js里面，执行期里面只执行了render来进行编译，在编译的时候肯定会使用到我们的变量，这个时候就会触发我们index.js里面的Object.defineProperty里面的get方法，触发一次col.add，我们看下[col](https://github.com/renminghao/miniMvvm/blob/master/src/collect.js)里面又是什么鬼
 <pre>```
 var _ = require('lodash');
 var collect = function () {
@@ -134,14 +134,14 @@ collect.prototype = {
 	}
 }
 ```</pre>
-可以看到，整个col就相当于一个仓库，来收集消息和触发消息，我们在渲染的时候将每条数据渲染的上下文进行一次收集，每次手机一个window.TARGET,而这个TARGET在哪里呢，可以看下[watch.js](http://gitlab.alibaba-inc.com/minghao.rmh/mvvm/blob/master/src/watch.js#L16)里面的get,
+可以看到，整个col就相当于一个仓库，来收集消息和触发消息，我们在渲染的时候将每条数据渲染的上下文进行一次收集，每次手机一个window.TARGET,而这个TARGET在哪里呢，可以看下[watch.js](https://github.com/renminghao/miniMvvm/blob/master/src/watch.js#L16)里面的get,
 <pre>```
 		window.TARGET = this;
 		var val = getCompress(this.content,this.scop)
 		window.TARGET = null;
 ```</pre>
 
-对的，在每次渲染的时候，我们获取数据的同时，在监视器里面讲TARGET暴露出去，这样子我们就确定了当前数据渲染的作用域，和当前数据对应的设置（更新）方法，岂不美哉？再看index.js的[set](http://gitlab.alibaba-inc.com/minghao.rmh/mvvm/blob/master/src/index.js#L46)里面我们在程序自动更新内容的时候，执行了一遍该数据对应的更新内容的触发，这样子就能在数据更新的时候来执行对应的更新方法来更新视图了，是不是很6
+对的，在每次渲染的时候，我们获取数据的同时，在监视器里面讲TARGET暴露出去，这样子我们就确定了当前数据渲染的作用域，和当前数据对应的设置（更新）方法，岂不美哉？再看index.js的[set](https://github.com/renminghao/miniMvvm/blob/master/src/render.js#L46)里面我们在程序自动更新内容的时候，执行了一遍该数据对应的更新内容的触发，这样子就能在数据更新的时候来执行对应的更新方法来更新视图了，是不是很6
 
 基本上整个仓库代码就实现了
 
